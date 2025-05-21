@@ -1,0 +1,53 @@
+#define SAMPLE_RATE 512
+#define BAUD_RATE 9600
+#define INPUT_PIN A0
+int count=0;
+int avg=0;
+String s1="",s2="";
+#include <SoftwareSerial.h>
+SoftwareSerial ss(8,9); // RX, TX
+#define RELAY_PIN 12          // Relay pin
+int avgArray[8];
+int index = 0;
+int positiveCount = 0;
+int negativeCount = 0;
+bool relay_state = false; // false = OFF, true = ON
+void setup() {
+  // Serial connection begin
+  Serial.begin(BAUD_RATE);
+  ss.begin(9600);
+  pinMode(RELAY_PIN, OUTPUT);
+  digitalWrite(RELAY_PIN, HIGH);//off
+}
+
+void loop() {
+  // Calculate elapsed time
+  static unsigned long past = 0;
+  unsigned long present = micros();
+  unsigned long interval = present - past;
+  past = present;
+
+  // Run timer
+  static long timer = 0;
+  timer -= interval;
+
+  // Sample
+  int adc= 0;
+  for(int i=0;i<5000;i++)
+    {
+        int sensor_value = analogRead(INPUT_PIN);
+        adc=adc+sensor_value;
+        Serialprintln(adc);
+    }
+
+	ch = Serial.read();
+	if(ch == '1')
+      {
+      digitalWrite(RELAY_PIN, LOW); // Turn relay ON
+      }
+      
+	if(ch == '0')
+      {
+      digitalWrite(RELAY_PIN, HIGH); // Turn relay OFF
+      }
+}
